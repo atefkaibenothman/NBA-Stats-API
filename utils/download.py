@@ -5,10 +5,8 @@ from utils.response import Response
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import PlayerGameLog
 
+# download all player basic info
 def download_all_players(database=None):
-    """
-    download all player basic info
-    """
     # call nba_api and get all the players
     all_players = players.get_players()
 
@@ -18,12 +16,9 @@ def download_all_players(database=None):
     # extract the response for only active players
     r.extract_active_players()
 
-
+# download player game log
+# src: https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/playergamelog.md
 def download_player_game_log(player_id, SEASON, SEASON_TYPE, database=None):
-    """
-    download player game log
-    src: https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/playergamelog.md
-    """
     # call nba_api and get player game info
     pgl = PlayerGameLog(player_id).get_normalized_dict()
 

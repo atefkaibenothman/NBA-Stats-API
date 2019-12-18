@@ -1,9 +1,9 @@
-api: 
+api:
 - https://pypi.org/project/nba-api/
 
 requirements:
 - requests
-- pandas 
+- pandas
 
 walkthrough:
 - launch.py | start
@@ -12,3 +12,4 @@ walkthrough:
 - response.py | extract from data
 - database.py | add data to database
 
+local database structure:
