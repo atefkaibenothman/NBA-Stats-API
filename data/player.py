@@ -6,6 +6,7 @@ class Player:
         self.first_name = first_name
         self.last_name = last_name
         self.is_active = is_active
+        self.game_log = dict()
 
     def get_id(self):
         return self.id
@@ -21,3 +22,6 @@ class Player:
 
     def get_is_active(self):
         return is_active
+
+    def add_game_log_entry(self):
+        pass

@@ -10,6 +10,9 @@ class Database:
     def __len__(self):
         return len(self.db)
 
+    def __iter__(self):
+        return self.db.__iter__()
+
     # prints player info (id -> full_name)
     def list_all_players(self):
         for k,v in self.db.items():
@@ -21,4 +24,3 @@ class Database:
             self.db[player_id] = Player(player_id, full_name, first_name, last_name, is_active)
         else:
             print(f"{player_id} is already in the database!")
-
