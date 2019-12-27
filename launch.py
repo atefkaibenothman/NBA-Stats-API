@@ -28,7 +28,8 @@ def download_game_log(db, COUNT=25):
 
 if __name__ == "__main__":
     db = start()
-    download_game_log(db, COUNT=1)
-    db.list_all_players()
+    # download_game_log(db, COUNT=1)
+    # db.list_all_players()
 
     # db.close_connection()
+    db.insert_player_data()

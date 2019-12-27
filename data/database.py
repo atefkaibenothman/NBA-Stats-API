@@ -59,18 +59,43 @@ class Database:
         self.con.close()
         print(f" --> closed connection to database <-- ")
 
+    # drop table
+    def drop_table(self, table_name):
+        command = f"DROP TABLE IF EXISTS {table_name};"
+        self.curr.execute(command)
+        self.con.commit()
+        print(f" --> dropping table: '{table_name}' <-- ")
+
     # create PLAYER table
     def create_player_table(self):
-        command = """
-        CREATE TABLE IF NOT EXISTS Player (
-            player_id INT PRIMARY KEY,
-            lname TEXT,
-            fname TEXT,
-            position TEXT,
-            is_active BOOLEAN
-        );
+        table_name = "Player"
+        self.drop_table(table_name)
+
+        command = f"""
+            CREATE TABLE IF NOT EXISTS {table_name} (
+                player_id INT PRIMARY KEY,
+                lname TEXT,
+                fname TEXT,
+                position TEXT,
+                is_active BOOLEAN
+            );
         """
 
         self.curr.execute(command)
         self.con.commit()
-        print(f" --> created table Player <-- ")
+        print(f" --> created table: '{table_name}' <-- ")
+
+    # insert player id's and names to database
+    def insert_player_data(self):
+        for player_id, _player in self.db.items():
+            # print(player_id, _player)
+            command = """
+                INSERT INTO Player (player_id, lname, fname, is_active)
+                VALUES (%s, %s, %s, %s)
+            """
+
+            self.curr.execute(
+                command,
+                (player_id, _player.last_name, _player.first_name, _player.is_active,),
+            )
+        self.con.commit()
