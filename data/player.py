@@ -24,18 +24,20 @@ class Player:
         return is_active
 
     def get_player_stats(self):
-        for game_id, stats in self.game_log.items():
-            print(f'matchup: {stats["matchup"]}')
-            print(f'game_date: {stats["game_date"]}')
-            print(f"game_id: {game_id}")
-            print("-------------------")
-            print(f'won/lose: {stats["win_lose"]}')
-            print(f'min_played: {stats["min_played"]}')
-            print(f'points: {stats["pts"]}')
-            print(f'assists: {stats["ast"]}')
-            print(f'steals: {stats["stl"]}')
-            print(f'blocks: {stats["blk"]}')
-            print()
+        if len(self.game_log) != 0:
+            print(f"-------> LOOKING AT {self.full_name}'s STATS <-------\n")
+            for game_id, stats in self.game_log.items():
+                print(f'matchup: {stats["matchup"]}')
+                print(f'game_date: {stats["game_date"]}')
+                print(f"game_id: {game_id}")
+                print("-------------------")
+                print(f'won/lose: {stats["win_lose"]}')
+                print(f'min_played: {stats["min_played"]}')
+                print(f'points: {stats["pts"]}')
+                print(f'assists: {stats["ast"]}')
+                print(f'steals: {stats["stl"]}')
+                print(f'blocks: {stats["blk"]}')
+                print()
 
     def add_game_log_entry(self, player_game_log):
         for game in player_game_log:

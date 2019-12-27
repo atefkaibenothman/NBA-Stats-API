@@ -17,11 +17,17 @@ def start():
 
 
 # iterates through all players and updates the databases w/ updated statistics
-def download_game_log(db):
+def download_game_log(db, COUNT=25):
+    i = 0
     for player_id in db:
         download_player_game_log(player_id, SEASON, SEASON_TYPE, database=db)
+        print(i)
+        i += 1
+        if i > COUNT:
+            return
 
 
 if __name__ == "__main__":
     db = start()
-    download_game_log(db)
+    download_game_log(db, COUNT=10)
+    db.list_all_players()

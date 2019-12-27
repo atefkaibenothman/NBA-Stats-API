@@ -14,6 +14,8 @@ class Database:
 
     # prints player info and stats (id -> full_name)
     def list_all_players(self):
+        print("\nLISTING ALL PLAYERS IN DATABASE")
+        print("===============================")
         for player_id,_player in self.db.items():
             # FINISH THIS
             _player.get_player_stats()
@@ -29,3 +31,9 @@ class Database:
     # adds a game log to the Player class
     def add_game_log(self, player_id, player_game_log):
         self.db[player_id].add_game_log_entry(player_game_log)
+
+
+    # TODO
+    # need to add a function that simulates sql code
+    # TODO
+    # need to look up python -> postgres
