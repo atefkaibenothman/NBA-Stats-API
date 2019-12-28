@@ -31,3 +31,12 @@ class Response:
                 self.db.add_game_log(player_id, self.resp["PlayerGameLog"])
             else:
                 print("database not specified... cannot add game log!")
+
+    # extract common player info for players (team_id, position, etc.)
+    def extract_player_common_info(self, player_id):
+        print(f"extracting common player info for {player_id}...")
+        for info in self.resp["CommonPlayerInfo"]:
+            if self.db != None:
+                self.db.add_player_common_info(player_id, info)
+            else:
+                print("database not specified... cannot add common player info!")

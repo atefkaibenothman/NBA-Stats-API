@@ -1,5 +1,9 @@
 from data.database import Database
-from utils.download import download_all_players, download_player_game_log
+from utils.download import (
+    download_all_players,
+    download_player_game_log,
+    download_common_player_info,
+)
 
 # GLOBALS
 SEASON = "2019-2020"
@@ -26,10 +30,18 @@ def download_game_log(db, COUNT=25):
             return
 
 
+# iterates through all players and updates the database w/ updated info (team_id, postition, etc.)
+def get_player_common_info(db):
+    for player_id in db:
+        download_common_player_info(player_id, database=db)
+
+
 if __name__ == "__main__":
     db = start()
+    get_player_common_info(db)
+
     # download_game_log(db, COUNT=1)
     # db.list_all_players()
 
-    # db.close_connection()
     db.insert_player_data()
+    db.close_connection()

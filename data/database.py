@@ -40,6 +40,10 @@ class Database:
     def add_game_log(self, player_id, player_game_log):
         self.db[player_id].add_game_log_entry(player_game_log)
 
+    # adds common info to Player class
+    def add_player_common_info(self, player_id, info):
+        self.db[player_id].add_common_info(info)
+
     # connect to the db
     def connect_to_db(self):
         h = "localhost"
@@ -77,6 +81,8 @@ class Database:
                 lname TEXT,
                 fname TEXT,
                 position TEXT,
+                team_id INT,
+                team_abr TEXT,
                 is_active BOOLEAN
             );
         """
@@ -90,12 +96,21 @@ class Database:
         for player_id, _player in self.db.items():
             # print(player_id, _player)
             command = """
-                INSERT INTO Player (player_id, lname, fname, is_active)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO Player (player_id, lname, fname, position, team_id, team_abr, is_active)
+                VALUES (%s, %s, %s, %s, %s, %s, %s);
             """
 
             self.curr.execute(
                 command,
-                (player_id, _player.last_name, _player.first_name, _player.is_active,),
+                (
+                    player_id,
+                    _player.last_name,
+                    _player.first_name,
+                    _player.position,
+                    _player.team_id,
+                    _player.team_abbreviation,
+                    _player.is_active,
+                ),
             )
         self.con.commit()
+        print("inserted data into table")

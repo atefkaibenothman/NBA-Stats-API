@@ -6,6 +6,10 @@ class Player:
         self.first_name = first_name
         self.last_name = last_name
         self.is_active = is_active
+        self.team_id = None
+        self.team_name = None
+        self.team_abbreviation = None
+        self.position = None
         self.game_log = dict()
 
     def get_id(self):
@@ -22,6 +26,12 @@ class Player:
 
     def get_is_active(self):
         return is_active
+
+    def add_common_info(self, info):
+        self.team_id = info["TEAM_ID"]
+        self.position = info["POSITION"]
+        self.team_name = info["TEAM_NAME"]
+        self.team_abbreviation = info["TEAM_ABBREVIATION"]
 
     def get_player_stats(self):
         if len(self.game_log) != 0:
