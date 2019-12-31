@@ -33,8 +33,7 @@ def download_all_teams(database=None):
 
 # download player game log
 # https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/playergamelog.md
-def download_player_game_log(SEASON, SEASON_TYPE, database=None, COUNT=25):
-    c = 1
+def download_player_game_log(SEASON, SEASON_TYPE, database=None):
     for player_id in database:
         # call nba_api and get player game info
         pgl = PlayerGameLog(player_id).get_normalized_dict()
@@ -44,10 +43,6 @@ def download_player_game_log(SEASON, SEASON_TYPE, database=None, COUNT=25):
 
         # extract the response for player game log
         r.extract_player_game_log(player_id)
-
-        c += 1
-        if c >= COUNT:
-            return
 
 
 # download common player info

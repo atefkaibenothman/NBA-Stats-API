@@ -72,7 +72,7 @@ class Database:
 
     # drop table
     def drop_table(self, table_name):
-        command = f"DROP TABLE IF EXISTS {table_name};"
+        command = f"DROP TABLE IF EXISTS {table_name} CASCADE;"
         self.curr.execute(command)
         self.con.commit()
         print(f" --> dropping table: '{table_name}' <-- ")
@@ -88,7 +88,7 @@ class Database:
                 lname TEXT,
                 fname TEXT,
                 position TEXT,
-                team_id INT,
+                team_id INT REFERENCES team (team_id),
                 team_abr TEXT,
                 is_active BOOLEAN
             );
@@ -109,6 +109,44 @@ class Database:
                 team_name TEXT,
                 team_abr TEXT
             );
+        """
+
+        self.curr.execute(command)
+        self.con.commit()
+        print(f" --> created table: '{table_name}' <-- ")
+
+    # create GameStats table
+    def create_gamestats_table(self):
+        table_name = "GameStats"
+        self.drop_table(table_name)
+
+        command = f"""
+            CREATE TABLE IF NOT EXISTS {table_name} (
+                player_id INT REFERENCES player (player_id),
+                game_id INT,
+                game_date TEXT,
+                mp INT,
+                fgm INT,
+                fga INT,
+                fg_pct NUMERIC,
+                fg3m INT,
+                fg3a INT,
+                fg3_pct NUMERIC,
+                ftm INT,
+                fta INT,
+                ft_pct NUMERIC,
+                oreb INT,
+                dreb INT,
+                tot_reb INT,
+                ast INT,
+                stl INT,
+                blk INT,
+                tov INT,
+                pf INT,
+                pts INT,
+                plus_minus INT,
+                primary key (player_id, game_id)
+            )
         """
 
         self.curr.execute(command)
@@ -141,6 +179,12 @@ class Database:
 
     # insert team data to database
     def insert_team_data(self):
+        self.curr.execute(
+            "INSERT INTO Team (team_id, team_name, team_abr) VALUES (%s, %s, %s);",
+            (0, "#", "#",),
+        )
+        self.con.commit()
+
         for team_id, _team in self.db_team.items():
             command = """
                 INSERT INTO Team (team_id, team_name, team_abr)
@@ -152,3 +196,67 @@ class Database:
             )
         self.con.commit()
         print("inserted data into team table")
+
+    # insert game logs to database
+    def insert_game_logs(self):
+        for player_id, _player in self.db_player.items():
+            if len(_player.game_log) != 0:
+                for game_id, _game in _player.game_log.items():
+                    game_date = _game["game_date"]
+                    min_played = _game["min_played"]
+                    fgm = _game["fgm"]
+                    fga = _game["fga"]
+                    fg_pct = _game["fg_pct"]
+                    fg3m = _game["fg3m"]
+                    fg3a = _game["fg3a"]
+                    fg3_pct = _game["fg3_pct"]
+                    ftm = _game["ftm"]
+                    fta = _game["fta"]
+                    ft_pct = _game["ft_pct"]
+                    oreb = _game["oreb"]
+                    dreb = _game["dreb"]
+                    tot_reb = _game["tot_reb"]
+                    ast = _game["ast"]
+                    stl = _game["stl"]
+                    blk = _game["blk"]
+                    tov = _game["tov"]
+                    pf = _game["pf"]
+                    pts = _game["pts"]
+                    plus_minus = _game["plus_minus"]
+
+                    command = f"""
+                        INSERT INTO gamestats (player_id, game_id, game_date, mp, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, tot_reb, ast, stl, blk, tov, pf, pts, plus_minus)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                    """
+
+                    self.curr.execute(
+                        command,
+                        (
+                            player_id,
+                            game_id,
+                            game_date,
+                            min_played,
+                            fgm,
+                            fga,
+                            fg_pct,
+                            fg3m,
+                            fg3a,
+                            fg3_pct,
+                            ftm,
+                            fta,
+                            ft_pct,
+                            oreb,
+                            dreb,
+                            tot_reb,
+                            ast,
+                            stl,
+                            blk,
+                            tov,
+                            pf,
+                            pts,
+                            plus_minus,
+                        ),
+                    )
+
+        self.con.commit()
+        print("inserted game logs to database")
