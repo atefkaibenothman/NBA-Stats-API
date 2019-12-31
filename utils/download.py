@@ -2,7 +2,7 @@ import requests
 
 from utils.response import Response
 
-from nba_api.stats.static import players
+from nba_api.stats.static import players, teams
 from nba_api.stats.endpoints import PlayerGameLog, commonplayerinfo
 
 # download all player basic info
@@ -18,27 +18,47 @@ def download_all_players(database=None):
     r.extract_active_players()
 
 
+# download all team basic info
+# https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/static/teams.md
+def download_all_teams(database=None):
+    # call nba_api and get all the teams
+    all_teams = teams.get_teams()
+
+    # intilialize respoinse with the specified database
+    r = Response(all_teams, database=database)
+
+    # extract the team data
+    r.extract_teams()
+
+
 # download player game log
 # https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/playergamelog.md
-def download_player_game_log(player_id, SEASON, SEASON_TYPE, database=None):
-    # call nba_api and get player game info
-    pgl = PlayerGameLog(player_id).get_normalized_dict()
+def download_player_game_log(SEASON, SEASON_TYPE, database=None, COUNT=25):
+    c = 1
+    for player_id in database:
+        # call nba_api and get player game info
+        pgl = PlayerGameLog(player_id).get_normalized_dict()
 
-    # initialize response with the specified database
-    r = Response(pgl, database=database)
+        # initialize response with the specified database
+        r = Response(pgl, database=database)
 
-    # extract the response for player game log
-    r.extract_player_game_log(player_id)
+        # extract the response for player game log
+        r.extract_player_game_log(player_id)
+
+        c += 1
+        if c >= COUNT:
+            return
 
 
 # download common player info
 # https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/commonplayerinfo.md
-def download_common_player_info(player_id, database=None):
-    # call nba_api and get common player info
-    cpi = commonplayerinfo.CommonPlayerInfo(player_id).get_normalized_dict()
+def download_common_player_info(database=None):
+    for player_id in database:
+        # call nba_api and get common player info
+        cpi = commonplayerinfo.CommonPlayerInfo(player_id).get_normalized_dict()
 
-    # initialize response with the specified database
-    r = Response(cpi, database=database)
+        # initialize response with the specified database
+        r = Response(cpi, database=database)
 
-    # extract the response for player common info
-    r.extract_player_common_info(player_id)
+        # extract the response for player common info
+        r.extract_player_common_info(player_id)

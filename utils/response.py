@@ -17,10 +17,21 @@ class Response:
                 last_name = player["last_name"]
                 is_active = player["is_active"]
 
-                if self.db != None:
-                    self.db.add_player(id, full_name, first_name, last_name, is_active)
-                else:
-                    print("database not specified... cannot add player!")
+                self.db.add_player(id, full_name, first_name, last_name, is_active)
+
+    # extract team info
+    def extract_teams(self):
+        print("extracting team templates...")
+        for team in self.resp:
+            id = team["id"]
+            full_name = team["full_name"]
+            abbr = team["abbreviation"]
+            nick_name = team["nickname"]
+            city = team["city"]
+            state = team["state"]
+            year_founded = team["year_founded"]
+
+            self.db.add_team(id, full_name, abbr, nick_name, city)
 
     # extract game log for players
     def extract_player_game_log(self, player_id):
