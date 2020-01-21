@@ -48,6 +48,17 @@ class Response:
         print(f"extracting common player info for {player_id}...")
         for info in self.resp["CommonPlayerInfo"]:
             if self.db != None:
+                # print("info: ", info)
                 self.db.add_player_common_info(player_id, info)
             else:
                 print("database not specified... cannot add common player info!")
+
+    # extract common team info for teams (conference, division, win/loses, etc.)
+    def extract_team_common_info(self, team_id):
+        print(f"extracting common team info for {team_id}...")
+        for info in self.resp["TeamInfoCommon"]:
+            if self.db != None:
+                # print("info: ", info)
+                self.db.add_team_common_info(team_id, info)
+            else:
+                print("database not specified... cannot add common team info!")

@@ -5,6 +5,7 @@ class Player:
         self.first_name = first_name
         self.last_name = last_name
         self.is_active = is_active
+        self.jersey = None
         self.team_id = None
         self.team_name = None
         self.team_abbreviation = None
@@ -12,6 +13,7 @@ class Player:
         self.game_log = dict()
 
     def add_common_info(self, info):
+        self.jersey = info["JERSEY"]
         self.team_id = info["TEAM_ID"]
         self.position = info["POSITION"]
         self.team_name = info["TEAM_NAME"]

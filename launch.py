@@ -4,6 +4,7 @@ from utils.download import (
     download_player_game_log,
     download_common_player_info,
     download_all_teams,
+    download_common_team_info,
 )
 
 # GLOBALS
@@ -21,10 +22,10 @@ def setup_database():
     db.create_team_table()
 
     # create 'Player' table
-    db.create_player_table()
+    # db.create_player_table()
 
     # create 'GameStats' table
-    db.create_gamestats_table()
+    # db.create_gamestats_table()
 
     return db
 
@@ -33,6 +34,9 @@ def setup_database():
 def retrieve_teams(db):
     # retrieve teams
     download_all_teams(db)
+
+    # retrieve team common info
+    download_common_team_info(db)
 
     # insert team data in postgres database
     db.insert_team_data()
@@ -60,8 +64,8 @@ def retrieve_player_game_logs(db, COUNT=10):
 
 
 if __name__ == "__main__":
-    # db = setup_database()
-    # retrieve_teams(db)
+    db = setup_database()
+    retrieve_teams(db)
     # retrieve_active_players(db)
     # retrieve_player_game_logs(db)
-    # db.close_connection()
+    db.close_connection()

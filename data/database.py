@@ -51,6 +51,10 @@ class Database:
     def add_player_common_info(self, player_id, info):
         self.db_player[player_id].add_common_info(info)
 
+    # adds common info to Team class
+    def add_team_common_info(self, team_id, info):
+        self.db_team[team_id].add_common_info(info)
+
     # connect to the db
     def connect_to_db(self):
         h = "localhost"
@@ -88,6 +92,7 @@ class Database:
                 lname TEXT,
                 fname TEXT,
                 position TEXT,
+                jersey TEXT,
                 team_id INT REFERENCES team (team_id),
                 team_abr TEXT,
                 is_active BOOLEAN
@@ -107,7 +112,14 @@ class Database:
             CREATE TABLE IF NOT EXISTS {table_name} (
                 team_id INT PRIMARY KEY,
                 team_name TEXT,
-                team_abr TEXT
+                team_abr TEXT,
+                team_city TEXT,
+                team_code TEXT,
+                team_conference TEXT,
+                team_division TEXT,
+                team_wins TEXT,
+                team_loses TEXT,
+                team_wlpct TEXT
             );
         """
 
@@ -125,6 +137,8 @@ class Database:
                 player_id INT REFERENCES player (player_id),
                 game_id INT,
                 game_date TEXT,
+                matchup TEXT,
+                winlose TEXT,
                 mp INT,
                 fgm INT,
                 fga INT,
@@ -158,8 +172,8 @@ class Database:
         for player_id, _player in self.db_player.items():
             # print(player_id, _player)
             command = """
-                INSERT INTO Player (player_id, lname, fname, position, team_id, team_abr, is_active)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
+                INSERT INTO Player (player_id, lname, fname, position, jersey, team_id, team_abr, is_active)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             """
 
             self.curr.execute(
@@ -169,6 +183,7 @@ class Database:
                     _player.last_name,
                     _player.first_name,
                     _player.position,
+                    _player.jersey,
                     _player.team_id,
                     _player.team_abbreviation,
                     _player.is_active,
@@ -180,19 +195,31 @@ class Database:
     # insert team data to database
     def insert_team_data(self):
         self.curr.execute(
-            "INSERT INTO Team (team_id, team_name, team_abr) VALUES (%s, %s, %s);",
-            (0, "#", "#",),
+            "INSERT INTO Team (team_id, team_name, team_abr, team_city, team_code, team_conference, team_division, team_wins, team_loses, team_wlpct) VALUES (%s, %s, %s ,%s, %s, %s, %s, %s, %s, %s);",
+            (0, "#", "#", "#", "#", "#", "#", "#", "#", "#"),
         )
         self.con.commit()
 
         for team_id, _team in self.db_team.items():
             command = """
-                INSERT INTO Team (team_id, team_name, team_abr)
-                VALUES (%s, %s, %s);
+                INSERT INTO Team (team_id, team_name, team_abr, team_city, team_code, team_conference, team_division, team_wins, team_loses, team_wlpct)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
 
             self.curr.execute(
-                command, (team_id, _team.nick_name, _team.abbr,),
+                command,
+                (
+                    team_id,
+                    _team.nick_name,
+                    _team.abbr,
+                    _team.city,
+                    _team.team_code,
+                    _team.conference,
+                    _team.division,
+                    _team.wins,
+                    _team.loses,
+                    _team.pct,
+                ),
             )
         self.con.commit()
         print("inserted data into team table")
@@ -204,6 +231,8 @@ class Database:
                 for game_id, _game in _player.game_log.items():
                     game_date = _game["game_date"]
                     min_played = _game["min_played"]
+                    matchup = _game["matchup"]
+                    winlose = _game["win_lose"]
                     fgm = _game["fgm"]
                     fga = _game["fga"]
                     fg_pct = _game["fg_pct"]
@@ -225,8 +254,8 @@ class Database:
                     plus_minus = _game["plus_minus"]
 
                     command = f"""
-                        INSERT INTO gamestats (player_id, game_id, game_date, mp, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, tot_reb, ast, stl, blk, tov, pf, pts, plus_minus)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                        INSERT INTO gamestats (player_id, game_id, game_date, matchup, winlose, mp, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, tot_reb, ast, stl, blk, tov, pf, pts, plus_minus)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
                     """
 
                     self.curr.execute(
@@ -235,6 +264,8 @@ class Database:
                             player_id,
                             game_id,
                             game_date,
+                            matchup,
+                            winlose,
                             min_played,
                             fgm,
                             fga,

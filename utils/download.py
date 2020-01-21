@@ -3,7 +3,7 @@ import requests
 from utils.response import Response
 
 from nba_api.stats.static import players, teams
-from nba_api.stats.endpoints import PlayerGameLog, commonplayerinfo
+from nba_api.stats.endpoints import PlayerGameLog, commonplayerinfo, teaminfocommon
 
 # download all player basic info
 # https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/static/players.md
@@ -57,3 +57,17 @@ def download_common_player_info(database=None):
 
         # extract the response for player common info
         r.extract_player_common_info(player_id)
+
+
+# download common team info
+# https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/commonplayerinfo.md
+def download_common_team_info(database=None):
+    for team_id, _team in database.db_team.items():
+        # call nba_api and get common team info
+        tci = teaminfocommon.TeamInfoCommon(team_id).get_normalized_dict()
+
+        # initialize response with the specified database
+        r = Response(tci, database=database)
+
+        # extract the response for team common info
+        r.extract_team_common_info(team_id)
